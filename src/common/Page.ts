@@ -528,9 +528,7 @@ export class Page extends EventEmitter {
             this.#workers.set(event.sessionId, worker);
             this.emit(PageEmittedEvents.WorkerCreated, worker);
             break;
-          case 'iframe':
-            break;
-          default:
+          case 'service_worker':
             // If we don't detach from service workers, they will never die.
             // We still want to attach to workers for emitting events.
             // We still want to attach to iframes so sessions may interact with them.
@@ -542,6 +540,9 @@ export class Page extends EventEmitter {
                 sessionId: event.sessionId,
               })
               .catch(debugError);
+            break;
+          default:
+            break;
         }
       }
     );
