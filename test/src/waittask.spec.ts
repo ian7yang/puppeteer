@@ -15,7 +15,6 @@
  */
 
 import expect from 'expect';
-import {isErrorLike} from '../../lib/cjs/puppeteer/util/ErrorLike.js';
 import {
   getTestState,
   setupTestBrowserHooks,
@@ -31,11 +30,9 @@ describe('waittask specs', function () {
     it('should accept a string', async () => {
       const {page} = getTestState();
 
-      const watchdog = page.waitForFunction(() => {
-        return (window as unknown as {__FOO: number}).__FOO === 1;
-      });
+      const watchdog = page.waitForFunction('self.__FOO === 1');
       await page.evaluate(() => {
-        return ((globalThis as any).__FOO = 1);
+        return ((self as unknown as {__FOO: number}).__FOO = 1);
       });
       await watchdog;
     });

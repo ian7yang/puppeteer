@@ -1,9 +1,7 @@
-import {createDeferredPromise} from '../util/DeferredPromise.js';
+import {injectedUtil} from '../injected/injected.js';
 
 declare global {
-  const InjectedUtil: {
-    createDeferredPromise: typeof createDeferredPromise;
-  };
+  const InjectedUtil: typeof injectedUtil;
 }
 
 /** @internal */
