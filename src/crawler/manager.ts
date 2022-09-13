@@ -68,7 +68,7 @@ export default class Manager {
     }
   }
 
-  async handleAttachedTarget(target: Target): void {
+  async handleAttachedTarget(target: Target): Promise<void> {
     const cdp = await target.createCDPSession();
     if (target.type() === 'page') {
       await cdp.send('SE.enable');
