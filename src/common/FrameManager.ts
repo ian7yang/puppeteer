@@ -156,7 +156,7 @@ export class FrameManager extends EventEmitter {
         client !== this.#client
           ? client.send('Target.setAutoAttach', {
               autoAttach: true,
-              waitForDebuggerOnStart: false,
+              waitForDebuggerOnStart: true,
               flatten: true,
             })
           : Promise.resolve(),
