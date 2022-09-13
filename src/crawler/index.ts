@@ -1,52 +1,68 @@
-import Manager from "./manager";
-import {sleep} from './utils'
+import Manager from './manager.js';
+import { sleep } from './utils.js';
+import yargsParser from 'yargs-parser';
+import Xvfb from './xvfb.js';
 
-const Xvfb = require('xvfb');
-const argv = require('yargs-parser')(process.argv.slice(2))
+const argv = yargsParser(process.argv.slice(2));
 
-const {getConsoleLogger} = require('./logger');
+import { getConsoleLogger } from './logger.js';
 
 const logger = getConsoleLogger('main');
 
-const setupXvfb = (interactive: boolean) => {
-
-  if (interactive) return () => { }
-  logger.info('Starting Xvfb')
-  const xvfbHandler = new Xvfb({
-    xvfb_args: ['-screen', '0', '1920x1080x24']
-  })
-  xvfbHandler.startSync()
-
-  return () => {
-    logger.info('Stropping Xvfb')
-    xvfbHandler.stopSync()
+const setupXvfb = async (interactive: boolean): Promise<() => void> => {
+  if (interactive) {
+    return async () => {};
   }
-}
+  logger.info('Starting Xvfb');
+  const xvfbHandler = new Xvfb({
+    args: ['-screen', '0', '1920x1080x24'],
+  });
+  await xvfbHandler.start();
+
+  return async () => {
+    logger.info('Stropping Xvfb');
+    await xvfbHandler.stop();
+  };
+};
 
 async function run() {
-  const { interactive, debug, numberToClick, device, website, timeout, chrome } = argv;
+  const {
+    interactive,
+    debug,
+    numberToClick,
+    device,
+    website,
+    timeout,
+    chrome,
+  } = argv;
   const launchOptions = {
     headless: !interactive,
-    args: ['--no-sandbox', '--enable-logging=stderr', '--vmodule=forensic_recorder=7'],
+    args: [
+      '--no-sandbox',
+      '--enable-logging=stderr',
+      '--vmodule=forensic_recorder=7',
+    ],
     executablePath: chrome,
     // dumpio: true
   };
-  const stopXvfb = setupXvfb(interactive);
+  const stopXvfb = await setupXvfb(interactive);
   const manager = new Manager(debug);
   await manager.launchChromium(launchOptions);
 
-  let url = website;
+  const url = website;
   logger.info(`Start crawling ${url}`);
   try {
-    await Promise.race([manager.crawl(url, device, numberToClick), sleep(timeout * 60 * 1000)])
-    logger.info(`${url} completed.`)
-  } catch (e) {
-    // @ts-ignore
+    await Promise.race([
+      manager.crawl(url, device, numberToClick),
+      sleep(timeout * 60 * 1000),
+    ]);
+    logger.info(`${url} completed.`);
+  } catch (e: any) {
     logger.error('Crawler error: ' + e.message + '. Stack: ' + e.stack);
   }
   stopXvfb();
 }
 
-run().catch(e => {
+run().catch((e) => {
   logger.error('Run error: ' + e.message + '. Stack: ' + e.stack);
-})
+});
