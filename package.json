@@ -67,7 +67,6 @@
   "author": "The Chromium Authors",
   "license": "Apache-2.0",
   "dependencies": {
-    "@types/lodash": "^4.14.185",
     "cross-fetch": "3.1.5",
     "debug": "4.3.4",
     "devtools-protocol": "0.0.1001819",
@@ -81,10 +80,10 @@
     "tar-fs": "2.1.1",
     "unbzip2-stream": "1.4.3",
     "winston": "^3.8.2",
-    "ws": "8.7.0",
-    "xvfb": "^0.4.0"
+    "ws": "8.7.0"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.185",
     "@commitlint/cli": "17.0.1",
     "@commitlint/config-conventional": "17.0.2",
     "@microsoft/api-documenter": "7.17.16",
