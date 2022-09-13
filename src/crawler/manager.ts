@@ -71,6 +71,8 @@ export default class Manager {
   async handleAttachedTarget(target: Target): Promise<void> {
     const cdp = await target.createCDPSession();
     if (target.type() === 'page') {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       await cdp.send('SE.enable');
       const hooks = [
         'DidInsertDOMNode',
